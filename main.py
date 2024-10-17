@@ -40,8 +40,17 @@ def get_system_details():
 
     return system_details
 
+def get_app_urls():
+    ip_address = "192.168.1.11"
+    ports = [7000, 22, 9000, 8085, 3002]
+    
+    urls = [f"http://{ip_address}:{port}" for port in ports]
+    
+    return urls
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     details = get_system_details()
+    app_urls = get_app_urls()
     
     message = (
         f"**Public IP:** {details['public_ip']}\n"
@@ -54,8 +63,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"  - Total RAM: {details['ram_info']['total_ram_gb']}\n"
         f"  - Available RAM: {details['ram_info']['available_ram_gb']}\n"
         f"**Thread Info:**\n"
-        f"  - Thread Count: {details['thread_info']['thread_count']}"
+        f"  - Thread Count: {details['thread_info']['thread_count']}\n"
+        f"**App URLs:**\n"
     )
+
+    for idx, url in enumerate(app_urls, 1):
+        message += f"  {idx}. {url}\n"
 
     await update.message.reply_text(message, parse_mode='Markdown')
 
